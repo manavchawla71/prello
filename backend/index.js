@@ -1,8 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
-
+const cors = require("cors");
 const app = express();
-app.use(express.json());
 const CardRoutes = require("./routes/cards");
 const Boardsroutes = require("./routes/boards");
 const ListRoutes = require("./routes/lists");
@@ -11,6 +10,20 @@ app.use("/api/boards", Boardsroutes);
 app.use("/api/lists", ListRoutes);
 app.use("/api/cards", CardRoutes);
 app.use("/api/auth", Userroutes);
+app.use(express.json());
+// const express = require("express");
+// const cors = require("cors");
+// const app = express();
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: "GET, POST, PUT, DELETE",
+    // other necessary configurations
+  })
+);
+
+// Rest of your server setup
 
 mongoose
   .connect(
