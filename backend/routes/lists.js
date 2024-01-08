@@ -47,19 +47,7 @@ router.get("/:id", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-router.get("/:id", async (req, res) => {
-  try {
-    const list = await List.findById(req.params.id);
-    if (!list) {
-      return res.status(404).json({ msg: "List not found" });
-    }
 
-    res.json(list);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-});
 router.put("/update/:id", async (req, res) => {
   try {
     const list = await List.findById(req.params.id);
@@ -98,4 +86,28 @@ router.patch("/move/:id", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+router.delete("/:id", async (req, res) => {
+  try {
+    const list = await List.findById(req.params.id);
+    if (!list) {
+      return res.status(404).json({ msg: "List not found" });
+    }
+
+    // Remove the list from the associated board
+    const board = await Board.findOneAndUpdate(
+      { lists: req.params.id },
+      { $pull: { lists: req.params.id } },
+      { new: true }
+    );
+
+    // Delete the list itself
+    await list.deleteOne();
+
+    res.json({ msg: "List deleted successfully" });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 module.exports = router;

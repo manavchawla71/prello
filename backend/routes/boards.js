@@ -39,4 +39,15 @@ router.get("/activity/:boardId", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+router.delete("/", async (req, res) => {
+  try {
+    // Remove all documents from the Board collection
+    await Board.deleteMany({});
+
+    res.json({ message: "All boards deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Could not delete boards" });
+  }
+});
 module.exports = router;
